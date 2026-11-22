@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#d8c69a">
+        <title>Template | Web Service</title>
+        <link rel="stylesheet" href="./swagger-style.css">
+        <style>
+            :root {
+                --paper:#d8c69a;
+                --paper-light:#e5d5ac;
+                --ink:#25251e;
+                --line:#57503d;
+                --muted:#665b44;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin:0;
+                min-height:100vh;
+                padding:24px;
+                background:#b8ab89;
+                color:var(--ink);
+                font-family:Arial,Helvetica,sans-serif;
+                display:grid;
+                place-items:center;
+            }
+            .sheet {
+                width:min(1060px,100%);
+                min-height:620px;
+                border:2px solid var(--ink);
+                outline:1px solid #e5d6b0;
+                outline-offset:5px;
+                background:var(--paper);
+                display:grid;
+                grid-template-columns:185px minmax(0,1fr);
+                box-shadow:8px 8px 0 rgba(38,35,25,.2);
+            }
+            .side {
+                border-right:1px solid var(--line);
+                display:flex;
+                flex-direction:column;
+            }
+            .brand {
+                padding:29px 23px;
+                border-bottom:1px solid var(--line);
+                font-family:Georgia,serif;
+                font-weight:900;
+                font-size:17px;
+                letter-spacing:.07em;
+            }
+            .side-nav {
+                padding:46px 23px;
+                display:grid;
+                gap:17px;
+                font-size:12px;
+                text-transform:uppercase;
+                letter-spacing:.08em;
+                font-weight:bold;
+            }
+            .side-nav a {
+                color:inherit;
+                text-decoration:none;
+            }
+            .side-nav a:hover {
+                text-decoration:underline;
+            }
+            .side-bottom {
+                margin-top:auto;
+                padding:20px 23px;
+                border-top:1px solid var(--line);
+                font-size:10px;
+                line-height:1.6;
+            }
+            .content {
+                min-width:0;
+                display:grid;
+                grid-template-rows:auto 1fr auto;
+            }
+            .topline {
+                min-height:87px;
+                display:grid;
+                grid-template-columns:repeat(3,1fr);
+                border-bottom:1px solid var(--line);
+            }
+            .topline > div {
+                padding:20px 18px;
+                display:flex;
+                gap:13px;
+                align-items:flex-start;
+                font-size:10px;
+                line-height:1.5;
+            }
+            .topline > div:not(:last-child) {
+                border-right:1px solid var(--line);
+            }
+            .number {
+                font: bold 17px Georgia,serif;
+            }
+            .hero {
+                padding:46px 48px 50px;
+                display:flex;
+                flex-direction:column;
+            }
+            .eyebrow {
+                font-size:11px;
+                font-weight:bold;
+                letter-spacing:.17em;
+                text-transform:uppercase;
+                margin:0 0 12px;
+            }
+            h1 {
+                margin:0;
+                font-size:clamp(52px,9vw,110px);
+                line-height:.92;
+                letter-spacing:-.075em;
+                font-family:Georgia,'Times New Roman',serif;
+                font-weight:900;
+            }
+            .hero-rule {
+                height:3px;
+                background:var(--ink);
+                margin:28px 0 24px;
+            }
+            .subtitle {
+                margin:0 0 28px;
+                max-width:520px;
+                font:italic 19px/1.5 Georgia,serif;
+            }
+            .tech {
+                display:grid;
+                grid-template-columns:repeat(3,minmax(0,1fr));
+                gap:15px;
+                margin-top:auto;
+            }
+            .tech-item {
+                min-height:120px;
+                padding:17px;
+                background:var(--paper-light);
+                border:1px solid var(--ink);
+                box-shadow:4px 4px 0 var(--ink);
+                display:flex;
+                flex-direction:column;
+                justify-content:space-between;
+            }
+            .tech-num {
+                font:13px Georgia,serif;
+            }
+            .tech-name {
+                font: bold clamp(16px,2.2vw,24px) Georgia,serif;
+                overflow-wrap:anywhere;
+            }
+            .bottom {
+                display:grid;
+                grid-template-columns:1fr 255px;
+                border-top:1px solid var(--line);
+            }
+            .links-area {
+                padding:27px 30px;
+            }
+            .small-heading {
+                margin:0 0 17px;
+                font-size:11px;
+                font-weight:800;
+                letter-spacing:.12em;
+                text-transform:uppercase;
+            }
+            .actions {
+                display:flex;
+                flex-wrap:wrap;
+                gap:12px;
+            }
+            .action {
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                min-height:43px;
+                padding:11px 17px;
+                border:1px solid var(--ink);
+                color:var(--ink);
+                background:var(--paper-light);
+                text-decoration:none;
+                font-size:12px;
+                font-weight:800;
+                letter-spacing:.04em;
+                box-shadow:3px 3px 0 var(--ink);
+                transition:transform .15s,box-shadow .15s,background .15s;
+            }
+            .action:hover {
+                background:#f2e5c5;
+                transform:translate(2px,2px);
+                box-shadow:1px 1px 0 var(--ink);
+            }
+            .action:focus-visible {
+                outline:3px solid #645734;
+                outline-offset:5px;
+            }
+            .author {
+                padding:27px 24px;
+                border-left:1px solid var(--line);
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+            }
+            .author-name {
+                margin:0;
+                font:bold 23px Georgia,serif;
+            }
+            .author .small-heading {
+                margin-bottom:9px;
+            }
+            @media (max-width:760px) {
+                body {
+                    padding:15px;
+                }
+                .sheet {
+                    grid-template-columns:1fr;
+                }
+                .side {
+                    border-right:0;
+                    border-bottom:1px solid var(--line);
+                    flex-direction:row;
+                    justify-content:space-between;
+                    align-items:center;
+                }
+                .brand {
+                    border:0;
+                    padding:17px;
+                }
+                .side-nav,.side-bottom {
+                    display:none;
+                }
+                .topline > div {
+                    padding:14px 10px;
+                }
+                .hero {
+                    padding:34px 23px 40px;
+                }
+                .bottom {
+                    grid-template-columns:1fr;
+                }
+                .author {
+                    border-left:0;
+                    border-top:1px solid var(--line);
+                }
+            }
+            @media (max-width:480px) {
+                .topline {
+                    grid-template-columns:1fr;
+                }
+                .topline > div {
+                    min-height:48px;
+                }
+                .topline > div:not(:last-child) {
+                    border-right:0;
+                    border-bottom:1px solid var(--line);
+                }
+                .tech {
+                    grid-template-columns:1fr;
+                }
+                .tech-item {
+                    min-height:90px;
+                }
+                .actions {
+                    flex-direction:column;
+                }
+                .action {
+                    width:100%;
+                }
+                h1 {
+                    font-size:clamp(46px,15vw,74px);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="sheet">
+            <aside class="side" aria-label="Información del proyecto">
+                <div class="brand">TEMPLATE.</div>
+                <nav class="side-nav" aria-label="Navegación">
+                    <a href="#inicio">Inicio</a>
+                    <a href="#tecnologias">Tecnologías</a>
+                    <a href="#enlaces">Enlaces</a>
+                    <a href="#autor">Autor</a>
+                </nav>
+                <div class="side-bottom">SOFTWARE DEVELOPMENT<br>JAVA / MAVEN / REST<br>© TEMPLATE</div>
+            </aside>
+
+            <main class="content" id="inicio">
+                <header class="topline" aria-label="Ficha del proyecto">
+                    <div><span class="number">1.</span><span>Servicio web<br>Arquitectura REST</span></div>
+                    <div><span class="number">2.</span><span>Desarrollo<br>Java</span></div>
+                    <div><span class="number">3.</span><span>Gestión de proyecto<br>Apache Maven</span></div>
+                </header>
+
+                <section class="hero" aria-labelledby="titulo">
+                    <p class="eyebrow">Software / Web Services / Development</p>
+                    <h1 id="titulo">TEMPLATE</h1>
+                    <div class="hero-rule"></div>
+                    <p class="subtitle">Proyecto de servicio web desarrollado con Java y gestionado con Maven.</p>
+                    <div class="tech" id="tecnologias">
+                        <article class="tech-item"><span class="tech-num">01 / SERVICE</span><span class="tech-name">WEB SERVICE</span></article>
+                        <article class="tech-item"><span class="tech-num">02 / LANGUAGE</span><span class="tech-name">JAVA</span></article>
+                        <article class="tech-item"><span class="tech-num">03 / BUILD</span><span class="tech-name">MAVEN</span></article>
+                    </div>
+                </section>
+
+                <footer class="bottom">
+                    <section class="links-area" id="enlaces">
+                        <h2 class="small-heading">Explorar el proyecto</h2>
+                        <div class="actions">
+                            <a class="action" href="{{LINK_SWAGGER}}">SWAGGER DOCS ↗</a>
+                            <a class="action" href="https://github.com/takkasama/template-web-service-java-maven" target="_blank" rel="noopener noreferrer">REPOSITORIO ↗</a>
+                        </div>
+                    </section>
+                    <section class="author" id="autor">
+                        <h2 class="small-heading">Autor</h2>
+                        <p class="author-name">takka-sama</p>
+                    </section>
+                </footer>
+            </main>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,50 @@
+:root {
+    --primary: #283747;
+    --background: #f7f7f5;
+    --surface: #ffffff;
+    --border: #d8d8d8;
+}
+
+body {
+    background: var(--background);
+    font-family: Arial, sans-serif;
+}
+
+.swagger-ui .topbar {
+    background: var(--primary);
+    padding: 12px 0;
+}
+
+.swagger-ui .info {
+    margin: 30px 0;
+}
+
+.swagger-ui .info .title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.swagger-ui .info .description {
+    line-height: 1.7;
+}
+
+.swagger-ui .opblock-tag {
+    font-size: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.swagger-ui .opblock {
+    border-radius: 4px;
+    box-shadow: none;
+}
+
+.swagger-ui .btn {
+    border-radius: 4px;
+}
+
+.swagger-ui .scheme-container {
+    background: var(--surface);
+    box-shadow: none;
+    border: 1px solid var(--border);
+}
