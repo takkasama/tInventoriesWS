@@ -3,11 +3,7 @@ package io.github.takkasama.web.tinventoriesws.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.sql.Connection;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -143,17 +139,6 @@ public class JasperUtil {
     
         NOTA (IMPORTANTE) : PARA EL DADO CASO QUE SE QUIERA BUSCAR ATRAVES DEL ID U OTRO ELEMENTO DE LA ENTIDAD SE BUSCARA O FILTRARA ATRAVEZ DE LOS PARAMETROS, ES DECIR SI SE PASA UN ID 1 BUSCARA Y HARA LAS CONSULTAS
                             FILTRANDOLAS POR ESTE ID.
-    
-        NOTA: PARA LOS REPORTES DE SICOBU LOS PARAMETROS SERIAN:
-             
-    
-            REPORTE DE INSTRUMENTOS ;
-                                    id de cliente o id de abogado 
-                                    fecha de inicio o/y fecha finla es decir el rango de fechas
-                                    id de bufete base
-            REPORTE GRAFICO :
-                             pendiente
-    
     NOTA : SI NO SE INDICA IDIOMA EL REPORTE SE GENERA EN ESPANNOL POR DEFECTO
                            
      */
@@ -167,6 +152,7 @@ public class JasperUtil {
                 return null;
             }
             langauge = langauge.toLowerCase();
+
             String country;
             switch (langauge) {
                 case "es" ->

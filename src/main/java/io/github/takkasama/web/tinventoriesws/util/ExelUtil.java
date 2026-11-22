@@ -32,6 +32,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
  */
 public class ExelUtil {
 
+    
     private final static short TITLE_SIZE = (short) 18;
     private final static short SUB_TITLE_SIZE = (short) 13;
     private final static short NORMAL_SIZE = (short) 11;
@@ -39,6 +40,9 @@ public class ExelUtil {
     private final static String FORMAT_SUM = "\"SUMA(%s%d:%s%d)\"";
 
     private final static String FONT_NAME = "Liberation Sans";
+    
+    
+    
     private static final System.Logger LOG = System.getLogger(ExelUtil.class.getName());
 
     private Workbook workbook;
@@ -203,18 +207,23 @@ public class ExelUtil {
 
             Object objectValue = method.invoke(object);
 
-            if (objectValue instanceof Number v) {
+            if(objectValue == null){
+                createInfoCell(row, "The value is empty", null, fCol);
+            }
+            else if (objectValue instanceof Number v) {
                 createInfoCell(row, null, v.doubleValue(), currentCol);
             }
-            if (objectValue instanceof String v) {
+            else if (objectValue instanceof String v) {
                 createInfoCell(row, v, null, currentCol);
             }
-            if (objectValue instanceof LocalDateTime v) {
+            else if (objectValue instanceof LocalDateTime v) {
                 createDateCell(row, v, currentCol);
             }
-            if (objectValue instanceof LocalDate v) {
+            else if (objectValue instanceof LocalDate v) {
                 LocalDateTime date = LocalDateTime.of(v, LocalTime.NOON);
                 createDateCell(row, date, currentCol);
+            }else {
+                createInfoCell(row, "The type is not supported", null, currentCol);
             }
 
             currentCol++;
