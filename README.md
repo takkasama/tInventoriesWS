@@ -1,4 +1,4 @@
-# Java Maven Web Service Template
+# tInventoriesWS
 
 ![Java](https://img.shields.io/badge/Java-17-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
 ![Maven](https://img.shields.io/badge/Apache_Maven-C71A36?style=flat-square&logo=apachemaven&logoColor=white)
@@ -6,9 +6,9 @@
 ![Swagger](https://img.shields.io/badge/OpenAPI-Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black)
 ![WAR](https://img.shields.io/badge/Packaging-WAR-555555?style=flat-square)
 
-A reusable **Java web service template** built with **Jakarta EE** and **Apache Maven**. It provides a starting point for REST APIs, OpenAPI documentation, and server-side applications packaged as WAR files.
+A Java inventory web service built with **Jakarta EE** and **Apache Maven**, providing REST APIs, OpenAPI documentation, and server-side applications packaged as WAR files.
 
-> **Template status:** This repository provides a foundation, not a production-ready service. Review dependencies, server configuration, authentication, and application-specific settings before deployment.
+> **Project status:** Review dependencies, server configuration, authentication, and application-specific settings before deployment.
 
 ## Technology stack
 
@@ -36,11 +36,11 @@ A reusable **Java web service template** built with **Jakarta EE** and **Apache 
 
 ### Create a project from the template
 
-Use [**Use this template**](https://github.com/takkasama/template-web-service-java-maven/generate), or clone it:
+Clone the repository:
 
 ```bash
-git clone https://github.com/takkasama/template-web-service-java-maven.git
-cd template-web-service-java-maven
+git clone https://github.com/takkasama/tInventoriesWS.git
+cd tInventoriesWS
 ```
 
 ### Configure the Maven project
@@ -48,13 +48,13 @@ cd template-web-service-java-maven
 Edit `pom.xml` to change its Maven coordinates:
 
 ```xml
-<groupId>com.example</groupId>
-<artifactId>my-web-service</artifactId>
+<groupId>io.github.takkasama.web</groupId>
+<artifactId>tInventoriesWS</artifactId>
 <version>1.0-SNAPSHOT</version>
 <packaging>war</packaging>
 ```
 
-Rename Java packages, REST application paths, and the OpenAPI resource package configuration to match your new project. Update any application URLs that include the former context path.
+The Java package root is `io.github.takkasama.web.tinventoriesws`. The REST application path and OpenAPI resource package configuration match this project.
 
 ### Build
 
@@ -68,10 +68,10 @@ The WAR will be generated in `target/`, provided the source code and dependencie
 
 Deploy the generated WAR to your compatible application server (for example, using the server administration console or your IDE).
 
-The effective context root depends on the deployment configuration and WAR name. If deployed under `template-web-service-java`, its base URL would typically be:
+The effective context root depends on the deployment configuration and WAR name. If deployed under `tInventoriesWS`, its base URL would typically be:
 
 ```text
-http://localhost:8080/template-web-service-java/
+http://localhost:8080/tInventoriesWS/
 ```
 
 ## API documentation
@@ -81,13 +81,13 @@ The Maven build is configured to retrieve **Swagger UI** from WebJars and copy i
 If the application is deployed with the context root above, the expected Swagger UI location is:
 
 ```text
-http://localhost:8080/template-web-service-java/docs/
+http://localhost:8080/tInventoriesWS/docs/
 ```
 
 The OpenAPI JSON endpoint depends on the REST/OpenAPI application configuration. An example endpoint is:
 
 ```text
-http://localhost:8080/template-web-service-java/ws/openapi.json
+http://localhost:8080/tInventoriesWS/ws/openapi.json
 ```
 
 > Verify that Swagger UI loads the correct OpenAPI JSON URL. The template's existing Swagger UI integration may require changes to its URL replacement logic, depending on the Swagger UI version.
@@ -117,4 +117,4 @@ GitHub: [@takkasama](https://github.com/takkasama)
 
 ## Repository
 
-[github.com/takkasama/template-web-service-java-maven](https://github.com/takkasama/template-web-service-java-maven)
+[github.com/takkasama/tInventoriesWS](https://github.com/takkasama/tInventoriesWS)

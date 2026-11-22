@@ -1,4 +1,4 @@
-package cr.ac.una.web.template.controller;
+package io.github.takkasama.web.tinventoriesws.controller;
 
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;

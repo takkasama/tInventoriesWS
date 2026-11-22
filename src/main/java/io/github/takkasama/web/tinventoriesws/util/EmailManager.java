@@ -1,4 +1,4 @@
-package cr.ac.una.web.template.util;
+package io.github.takkasama.web.tinventoriesws.util;
 
 import java.util.Arrays;
 import java.util.Properties;

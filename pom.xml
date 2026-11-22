@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cr.ac.una.web</groupId>
-    <artifactId>template-web-service-java</artifactId>
+    <groupId>io.github.takkasama.web</groupId>
+    <artifactId>tInventoriesWS</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>template-web-service-java</name>
+    <name>tInventoriesWS</name>
     
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -203,7 +203,7 @@
                     <replacements>
                         <replacement>
                             <token>https://petstore.swagger.io/v2/swagger.json</token>
-                            <value>/${project.name}/ws/openapi.json</value>
+                            <value>/tInventoriesWS/ws/openapi.json</value>
                         </replacement>
                     </replacements>
                 </configuration>

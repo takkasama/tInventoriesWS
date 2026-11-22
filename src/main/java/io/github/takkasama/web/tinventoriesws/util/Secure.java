@@ -1,4 +1,4 @@
-package cr.ac.una.sicobuws.util;
+package io.github.takkasama.web.tinventoriesws.util;
 
 import jakarta.ws.rs.NameBinding;
 import java.lang.annotation.ElementType;
