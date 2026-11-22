@@ -1,7 +1,7 @@
-package cr.ac.una.web.template.controller;
+package io.github.takkasama.web.tinventoriesws.controller;
 
-import cr.ac.una.sicobuws.util.JwTokenHelper;
-import cr.ac.una.sicobuws.util.Secure;
+import io.github.takkasama.web.tinventoriesws.util.JwTokenHelper;
+import io.github.takkasama.web.tinventoriesws.util.Secure;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;

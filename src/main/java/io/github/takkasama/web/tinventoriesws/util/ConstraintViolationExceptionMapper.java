@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cr.ac.una.web.template.util;
+package io.github.takkasama.web.tinventoriesws.util;
 
-import cr.ac.una.web.template.util.AnswerCode;
+import io.github.takkasama.web.tinventoriesws.util.AnswerCode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;

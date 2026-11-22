@@ -1,7 +1,7 @@
-package cr.ac.una.web.template;
+package io.github.takkasama.web.tinventoriesws;
 
-import cr.ac.una.web.template.util.ConstraintViolationExceptionMapper;
-import cr.ac.una.web.template.controller.SecurityFilter;
+import io.github.takkasama.web.tinventoriesws.util.ConstraintViolationExceptionMapper;
+import io.github.takkasama.web.tinventoriesws.controller.SecurityFilter;
 import jakarta.ws.rs.ApplicationPath;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class JakartaRestConfiguration extends ResourceConfig {
     public JakartaRestConfiguration() {
         super();
 
-        packages("cr.ac.una.web.template.controller", 
+        packages("io.github.takkasama.web.tinventoriesws.controller",
                 "io.swagger.v3.jaxrs2.integration.resources");
         registerCustomProviders();
 

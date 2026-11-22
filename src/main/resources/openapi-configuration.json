@@ -1,14 +1,14 @@
 {
     "resourcePackages": [
-        "cr.ac.una.web.template.controller"
+        "io.github.takkasama.web.tinventoriesws.controller"
     ],
     "prettyPrint": true,
     "cacheTTL": 0,
     "openAPI": {
         "info": {
             "version": "1.0.0",
-            "title": "TEMPLATE | REST API",
-            "description": "Documentación de los servicios REST de TEMPLATE.\n\nAPI desarrollada con Java, Maven y Jakarta EE.\n\nPermite consultar los endpoints disponibles, sus parámetros, modelos de datos y respuestas HTTP.\n\n**Autenticación:** JWT Bearer Token.",
+            "title": "tInventoriesWS | REST API",
+            "description": "Documentación de los servicios REST de tInventoriesWS.\n\nAPI desarrollada con Java, Maven y Jakarta EE.\n\nPermite consultar los endpoints disponibles, sus parámetros, modelos de datos y respuestas HTTP.\n\n**Autenticación:** JWT Bearer Token.",
             "termsOfService": "https://github.com/takkasama",
             "contact": {
                 "name": "takka-sama",
@@ -22,11 +22,11 @@
         },
         "servers": [
             {
-                "url": "http://localhost:8080/template-web-service-java/",
+                "url": "http://localhost:8080/tInventoriesWS/",
                 "description": "Servidor local HTTP"
             },
             {
-                "url": "https://localhost:8181/template-web-service-java/",
+                "url": "https://localhost:8181/tInventoriesWS/",
                 "description": "Servidor local HTTPS"
             }
         ],
