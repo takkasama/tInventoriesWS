@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -22,9 +22,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 
 /**
  *
@@ -32,16 +32,128 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
  */
 public class ExelUtil {
 
-    
-    private final static short TITLE_SIZE = (short) 18;
-    private final static short SUB_TITLE_SIZE = (short) 13;
-    private final static short NORMAL_SIZE = (short) 11;
+    private enum TypeCell {
+        TITLE_CELL( new XSSFColor(new byte[]{(byte) 72, (byte) 56, (byte) 53})
+                , new XSSFColor(new byte[]{(byte) 190, (byte) 226, (byte) 194})
+                , null
+                , (short) 18, 
+                "Liberation Sans"),
+        SUBTITLE_CELL(new XSSFColor(new byte[]{(byte) 240, (byte) 238, (byte) 228})
+                , new XSSFColor(new byte[]{(byte) 39, (byte) 27, (byte) 16})
+                , null, 
+                (short) 18, "Liberation Sans"),
+        INFO_CELL(new XSSFColor(new byte[]{(byte) 240, (byte) 238, (byte) 228})
+                , new XSSFColor(new byte[]{(byte) 39, (byte) 27, (byte) 16})
+                , null, 
+                (short) 18, "Liberation Sans");
 
-    private final static String FORMAT_SUM = "\"SUMA(%s%d:%s%d)\"";
+        private XSSFColor foregroundColor;
+        private XSSFColor backgroundColor;
+        private XSSFColor borderColor;
 
-    private final static String FONT_NAME = "Liberation Sans";
-    
-    
+        private short fontSize;
+        private String fontName;
+
+        private TypeCell(XSSFColor textColor, XSSFColor foregroundColor, XSSFColor borderColor, short fontSize, String fontName) {
+            this.foregroundColor = textColor;
+            this.backgroundColor = foregroundColor;
+            this.borderColor = borderColor;
+
+            this.fontSize = fontSize;
+            this.fontName = fontName;
+        }
+
+        public XSSFColor getForegroundColor() {
+            return foregroundColor;
+        }
+
+        public void setForegroundColor(XSSFColor foregroundColor) {
+            this.foregroundColor = foregroundColor;
+        }
+
+        public XSSFColor getBackgroundColor() {
+            return backgroundColor;
+        }
+
+        public void setBackgroundColor(XSSFColor backgroundColor) {
+            this.backgroundColor = backgroundColor;
+        }
+
+        public XSSFColor getBorderColor() {
+            return borderColor;
+        }
+
+        public void setBorderColor(XSSFColor borderColor) {
+            this.borderColor = borderColor;
+        }
+
+        public short getFontSize() {
+            return fontSize;
+        }
+
+        public void setFontSize(short fontSize) {
+            this.fontSize = fontSize;
+        }
+
+        public String getFontName() {
+            return fontName;
+        }
+
+        public void setFontName(String fontName) {
+            this.fontName = fontName;
+        }
+
+        public void createCell(Workbook workbook, Row owner, int column, Object value) {
+            Cell cell = owner.createCell(column);
+            CellStyle style = buildStyle(workbook);
+
+            switch (value) {
+                case null -> {
+                    cell.setCellValue("- - -");
+                    throw new NullPointerException("Null Pointer Exeption : The value to cell is Null");
+                }
+                case Number n -> {
+                    cell.setCellValue(n.doubleValue());
+                }
+                case String s -> {
+                    cell.setCellValue(s.isBlank() ? "- - -" : s);
+                }
+                case LocalDate d -> {
+                    cell.setCellValue(d);
+                    style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("dd - MM - yyyy"));
+
+                }
+                case LocalDateTime t -> {
+                    cell.setCellValue(t);
+                    style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("dd - MM - yyyy : hh.mm.ss"));
+                }
+                case Boolean b -> {
+                    cell.setCellValue(b);
+                }
+                default -> {
+                    cell.setCellValue(" - - - ");
+                    throw new UnsupportedOperationException("Unsupported Type : The value to Cell is not supported");
+                }
+
+            }
+        }
+
+        private CellStyle buildStyle(Workbook workbook) {
+            CellStyle style = workbook.createCellStyle();
+            style.setAlignment(HorizontalAlignment.CENTER);
+            style.setFillBackgroundColor(backgroundColor);
+            style.setFillForegroundColor(foregroundColor);
+
+            Font font = workbook.createFont();
+            font.setFontName(fontName);
+            font.setFontHeightInPoints(fontSize);
+            font.setColor(foregroundColor.getIndex());
+
+            style.setFont(font);
+
+            return style;
+        }
+    };
     
     private static final System.Logger LOG = System.getLogger(ExelUtil.class.getName());
 
@@ -53,117 +165,7 @@ public class ExelUtil {
         this.sheets = new HashMap<>();
 
     }
-
-    public void createHeaderCell(Row headerRow, String value) {
-        Cell cell = headerRow.createCell(headerRow.getRowNum());
-        cell.setCellValue(value);
-
-        CellStyle style = workbook.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
-
-        style.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-        Font font = workbook.createFont();
-
-        font.setBold(true);
-        font.setFontHeightInPoints(TITLE_SIZE);
-        font.setFontName(FONT_NAME);
-        font.setColor(IndexedColors.WHITE.getIndex());
-
-        style.setFont(font);
-
-        cell.setCellStyle(style);
-
-    }
-
-    public void createSubTitleCell(Row row, String value, int colPos) {
-        Cell cell = row.createCell(colPos);
-        cell.setCellValue(value.toUpperCase());
-
-        CellStyle style = workbook.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());
-
-        Font font = workbook.createFont();
-
-        font.setBold(true);
-        font.setFontHeightInPoints(SUB_TITLE_SIZE);
-        font.setFontName(FONT_NAME);
-        font.setColor(IndexedColors.DARK_BLUE.getIndex());
-
-        style.setFont(font);
-
-        cell.setCellStyle(style);
-    }
-
-    public void createInfoCell(Row row, String valueLetter, Double valueNumeric, int colPos) {
-        Cell cell = row.createCell(colPos);
-
-        if (valueLetter != null && !valueLetter.isBlank()) {
-            cell.setCellValue(valueLetter);
-        } else {
-            cell.setCellValue(valueNumeric);
-        }
-
-        CellStyle style = workbook.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setFillForegroundColor(IndexedColors.WHITE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
-
-        Font font = workbook.createFont();
-        font.setFontName(FONT_NAME);
-        font.setFontHeightInPoints(NORMAL_SIZE);
-        font.setColor(IndexedColors.DARK_BLUE.getIndex());
-
-        style.setFont(font);
-
-        cell.setCellStyle(style);
-    }
-
-    public void createDateCell(Row row, LocalDateTime date, int colPos) {
-        Cell cell = row.createCell(colPos);
-        cell.setCellValue(date);
-
-        CellStyle style = workbook.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());
-
-        Font font = workbook.createFont();
-        font.setFontName(FONT_NAME);
-        font.setFontHeightInPoints(NORMAL_SIZE);
-        font.setColor(IndexedColors.DARK_BLUE.getIndex());
-        style.setFont(font);
-
-        CreationHelper creationHelper = workbook.getCreationHelper();
-
-        style.setDataFormat(creationHelper.createDataFormat().getFormat("dd / MM / yyyy - HH:mm"));
-
-        cell.setCellStyle(style);
-
-    }
-
-    public void createSumCell(Row row, int rowA, int rowB, int colA, int colB, int colPos) {
-
-        Cell cell = row.createCell(colPos);
-
-        String cA = CellReference.convertNumToColString(colA);
-        String cB = CellReference.convertNumToColString(colB);
-
-        String formula = String.format(FORMAT_SUM, cA, rowA, cB, rowB);
-
-        cell.setCellFormula(formula);
-
-    }
-
+    
     private void reSizeColumns(Sheet sheet, int firstCol, int lastCol) {
         for (int i = firstCol; i <= lastCol; i++) {
             sheet.autoSizeColumn(i);
@@ -198,7 +200,8 @@ public class ExelUtil {
      * se aceptara los tipos : Double - Integer - Float || double - int - float
      * LocalDate o LocalDateTime String
      */
-    private void fillCells(Row row, int fCol, Object object, List<String> atributesName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private void fillCells(Row row, int fCol, Object object, List<String> atributesName) throws NoSuchMethodException, IllegalAccessException, 
+            InvocationTargetException , NullPointerException, UnsupportedOperationException{
         int currentCol = fCol;
         for (String s : atributesName) {
 
@@ -207,25 +210,8 @@ public class ExelUtil {
 
             Object objectValue = method.invoke(object);
 
-            if(objectValue == null){
-                createInfoCell(row, "The value is empty", null, fCol);
-            }
-            else if (objectValue instanceof Number v) {
-                createInfoCell(row, null, v.doubleValue(), currentCol);
-            }
-            else if (objectValue instanceof String v) {
-                createInfoCell(row, v, null, currentCol);
-            }
-            else if (objectValue instanceof LocalDateTime v) {
-                createDateCell(row, v, currentCol);
-            }
-            else if (objectValue instanceof LocalDate v) {
-                LocalDateTime date = LocalDateTime.of(v, LocalTime.NOON);
-                createDateCell(row, date, currentCol);
-            }else {
-                createInfoCell(row, "The type is not supported", null, currentCol);
-            }
-
+            TypeCell.INFO_CELL.createCell(workbook, row, fCol, objectValue);
+            
             currentCol++;
         }
     }
@@ -250,21 +236,17 @@ public class ExelUtil {
      */
     public byte[] buildExelFile(List<Object> objects, List<String> atributesName, String title) {
         try {
-            if (workbook == null) {
-                workbook = new SXSSFWorkbook();
-            }
-
             SXSSFSheet sheet = (SXSSFSheet) workbook.createSheet(title);
 
             mergeCells(sheet, 2, 3, 1, atributesName.size());
 
             Row headerRow = sheet.createRow(2);
-            createHeaderCell(headerRow, title);
+            TypeCell.TITLE_CELL.createCell(workbook, headerRow, 1, title);
 
             Row subtitlesRow = sheet.createRow(4);
             int currentCol = 1;
             for (String p : atributesName) {
-                createSubTitleCell(subtitlesRow, p, currentCol);
+                TypeCell.SUBTITLE_CELL.createCell(workbook, subtitlesRow, currentCol, p);
                 currentCol++;
             }
 
@@ -286,7 +268,11 @@ public class ExelUtil {
             LOG.log(System.Logger.Level.ERROR, "Error to access in to he methods of the Objects, the method could be private or protected", ex);
         } catch (InvocationTargetException ex) {
             LOG.log(System.Logger.Level.ERROR, "Error to get value of method, could be a null value", ex);
-        }
+        }  catch (NullPointerException ex) {
+            LOG.log(System.Logger.Level.ERROR, (String)null, ex);
+        } catch (UnsupportedOperationException ex) {
+            LOG.log(System.Logger.Level.ERROR, (String)null, ex);
+        } 
         return null;
     }
 
