@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.github.takkasama.web.tinventoriesws.util;
 
 import java.io.Serializable;
@@ -13,14 +8,14 @@ import java.util.HashMap;
  * @author ccarranza
  */
 public class Answer implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private Boolean state;
-    private AnswerCode answerCode;   
-    private String message;    
+    private AnswerCode answerCode;
+    private String message;
     private String internalMessage;
-    private HashMap<String, Object> result; 
+    private HashMap<String, Object> result;
 
     public Answer() {
         this.result = new HashMap<>();
@@ -33,9 +28,9 @@ public class Answer implements Serializable {
         this.internalMessage = internalMessage;
         this.result = new HashMap<>();
     }
-    
-    public Answer(Boolean estado, AnswerCode answerCode, String message, String internalMessage, String name, Object result) {
-        this.state = estado;
+
+    public Answer(Boolean state, AnswerCode answerCode, String message, String internalMessage, String name, Object result) {
+        this.state = state;
         this.answerCode = answerCode;
         this.message = message;
         this.internalMessage = internalMessage;
@@ -43,15 +38,15 @@ public class Answer implements Serializable {
         this.result.put(name, result);
     }
 
-    public Answer(Boolean estado, AnswerCode answerCode, String message ,String internalMessage, Object result) {
-        this.state = estado;
+    public Answer(Boolean state, AnswerCode answerCode, String message, String internalMessage, Object result) {
+        this.state = state;
         this.answerCode = answerCode;
         this.message = message;
         this.internalMessage = internalMessage;
         this.result = new HashMap<>();
         this.result.put("[Object]", result);
     }
-    
+
     public Boolean getState() {
         return state;
     }
@@ -83,20 +78,20 @@ public class Answer implements Serializable {
     public void setInternalMessage(String internalMessage) {
         this.internalMessage = internalMessage;
     }
-    
-    public Object getResultado(String name) {
+
+    public Object getResult(String name) {
         return result.get(name);
     }
 
-    public void setResultado(String name, Object result) {
+    public void setResult(String name, Object result) {
         this.result.put(name, result);
     }
-    
-    public Object getResultado() {
+
+    public Object getResult() {
         return result.get("[Object]");
     }
 
-    public void setResultado(Object result) {
+    public void setResult(Object result) {
         this.result.put("[Object]", result);
     }
 }

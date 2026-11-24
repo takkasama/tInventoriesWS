@@ -5,12 +5,12 @@ package io.github.takkasama.web.tinventoriesws.util;
  * @author ccarranza
  */
 public enum AnswerCode {
-    CORRECTO(200),
-    ERROR_ACCESO(403),
-    ERROR_PERMISOS(401),
-    ERROR_NOENCONTRADO(404),
-    ERROR_CLIENTE(400),
-    ERROR_INTERNO(500);
+    OK(200),
+    FORBIDDEN(403),
+    UNAUTHORIZED(401),
+    NOT_FOUND(404),
+    BAD_REQUEST(400),
+    INTERNAL_SERVER_ERROR(500);
 
     private Integer value;
 

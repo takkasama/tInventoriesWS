@@ -39,7 +39,7 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
                         ((ConstraintViolation) constraintViolation.getConstraintViolations().toArray()[0]).getLeafBean().getClass().toString()), ex);
             }
 
-            return Response.status(AnswerCode.ERROR_CLIENTE.getValue())
+            return Response.status(AnswerCode.BAD_REQUEST.getValue())
                     .entity(violation.getMessage().concat(". Los siguientes datos son invalidos [").concat(atributos).concat("]."))
                     .type(MediaType.TEXT_PLAIN_TYPE)
                     .build();
@@ -47,7 +47,7 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
         } catch (Exception ex) {
             this.logger.log(Level.SEVERE, String.format("Ocurrió un error al validar los datos de la entidad recibida [%s]. ",
                     ((ConstraintViolation) constraintViolation.getConstraintViolations().toArray()[0]).getLeafBean().getClass().toString()), ex);
-            return Response.status(AnswerCode.ERROR_INTERNO.getValue())
+            return Response.status(AnswerCode.INTERNAL_SERVER_ERROR.getValue())
                     .entity("Ocurrió un error al validar los datos recibidos.")
                     .type(MediaType.TEXT_PLAIN_TYPE)
                     .build();

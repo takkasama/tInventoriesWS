@@ -14,7 +14,10 @@ import jakarta.activation.FileDataSource;
 
 import java.util.List;
 import java.io.File;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author takkasama
@@ -28,7 +31,7 @@ public class EmailManager {
 
         private String host;
         private String port;
-
+        
         private String hostName;
 
         private Host(String hostName, String host, String port) {
@@ -40,9 +43,16 @@ public class EmailManager {
         public String getHost() {
             return host;
         }
+        public void setHost(String host){
+            this.host = host;
+        }
 
+                
         public String getPort() {
             return port;
+        }
+        public void setPort(String port){
+            this.port = port;
         }
 
         public String getHostName() {
@@ -51,7 +61,7 @@ public class EmailManager {
 
         public static Host findHost(String hostName) {
             hostName = hostName.toLowerCase();
-            
+
             switch (hostName) {
                 case "gmail":
                     return GMAIL;
@@ -66,53 +76,25 @@ public class EmailManager {
     }
     private static final System.Logger LOG = System.getLogger(EmailManager.class.getName());
 
-    private static EmailManager instance;
     private static Properties props;
     private static Session session;
-    private static String emailUser;
-    private static boolean initialized = false;
+    private static String userEmail;
 
-    private static String host;
-    private static String port = "587";
-
-    private EmailManager() {
-    }
-
-    public static EmailManager getInstance() {
-        if (instance == null) {
-            synchronized (EmailManager.class) {
-                if (instance == null) {
-                    instance = new EmailManager();
-                }
-            }
-        }
-        return instance;
+    public EmailManager() {
+        userEmail = "";
     }
 
     public static void setInitSession(String mail, char[] appPassword, Host host) {
         init(mail, appPassword, host);
     }
 
-    private static void setPort(String port) {
-        EmailManager.port = port;
-    }
-
-    private static void setEmailUser(String emailUser) {
-        EmailManager.emailUser = emailUser;
-    }
-
-    private static void setHost(Host host) {
-        EmailManager.host = host.getHost();
-    }
-
-    private static void init(String emailUser, char[] emailPassword, Host host) {
+    private static boolean init(String emailUser, char[] emailPassword, Host host) {
         try {
             if (emailPassword == null || emailPassword.length == 0) {
                 throw new IllegalArgumentException("The password is necesary to open session.");
             }
-            setHost(host);
-            setEmailUser(emailUser);
-            definePropertiesConnection();
+            userEmail = emailUser;
+            definePropertiesConnection(host);
 
             final String pwd = new String(emailPassword);
 
@@ -125,95 +107,110 @@ public class EmailManager {
 
             session.setDebug(false);
             Arrays.fill(emailPassword, '\0');
-            initialized = true;
+            return true;
         } catch (Exception e) {
             LOG.log(System.Logger.Level.ERROR, "Error : Fail to init de email", e);
+            return false;
         }
+
     }
 
-    private static void definePropertiesConnection() {
+    private static void definePropertiesConnection(Host host) {
         props = new Properties();
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.host", host.getHost());
+        props.put("mail.smtp.port", host.getPort());
         props.put("mail.smtp.auth", "true");
-        
+
+        //PROTROCOLO QUE SE USA EN REDES PRIVADAS COMO LAS DE UNIVERIDADES.
+        //EN DADO CADO USAR EN EL PUERTO 465 NO EL PUETO 587
+//        props.put("mail.smtp.ssl.enable", "true");
+//        props.put("mail.smtp.ssl.trust", "true");
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.starttls.required", "true");
-        
+
         props.put("mail.smtp.connectiontimeout", "10000");
         props.put("mail.smtp.timeout", "10000");
     }
 
-    private Message buildMessage(String emailReceptor, String subject, String htmlBody, String plainBody, List<File> files, List<String> fileNames)
-            throws MessagingException {
-        checkInitialized();
+    private static Message buildMessageToPlainBody(String emailReceptor, String subject, String plainBody, Map<String, File> files) throws MessagingException, IllegalArgumentException {
 
-        MimeMultipart multipart = new MimeMultipart();
+        if (emailReceptor == null || emailReceptor.isBlank()) {
+            throw new IllegalArgumentException("[FAIL - buildMessageToPlainBody] : The parameter emailReceptor is necessary to build and send Message");
+        }
+
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(emailUser));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailReceptor));
-        message.setSubject(subject);
+        message.setFrom(new InternetAddress(userEmail));
+        message.setSubject(subject == null || subject.isBlank() ? "NON" : subject);
         message.setSentDate(new Date());
 
-        MimeBodyPart textPart = new MimeBodyPart();
-        textPart.setText(plainBody, "UTF-8");
+        MimeBodyPart plaintText = new MimeBodyPart();
+        plaintText.setText(plainBody, "UTF-8");
 
-        MimeBodyPart htmlPart = new MimeBodyPart();
-        htmlPart.setContent(htmlBody, "text/html; charset=UTF-8");
+        MimeMultipart parts = new MimeMultipart();
+        parts.addBodyPart(plaintText);
 
-        if (files != null && fileNames != null) {
-            MimeBodyPart filesPart = null;
-            for (int i = 0; i < files.size(); i++) {
-                filesPart = new MimeBodyPart();
-                filesPart.setDataHandler(new DataHandler(new FileDataSource(files.get(i))));
-                filesPart.setFileName(fileNames.get(i));
-                multipart.addBodyPart(filesPart);
+        if (files != null && !files.isEmpty()) {
+            List<String> keys = new ArrayList<>(files.keySet());
+            for (String s : keys) {
+                MimeBodyPart filePart = new MimeBodyPart();
+                File file = files.get(s);
+                if (file != null) {
+                    filePart.setDataHandler(new DataHandler(new FileDataSource(file)));
+                    filePart.setFileName(s);
+                    parts.addBodyPart(filePart);
+                }
             }
-
         }
-        multipart.addBodyPart(textPart);
-        multipart.addBodyPart(htmlPart);
-        message.setContent(multipart);
+
+        message.setContent(parts);
 
         return message;
     }
 
-    public boolean sendMessage(String emailReceptor, String subject, String htmlBody, String plainBody) {
+    private static Message buildMessageToHtmlBody(String emailReceptor, String subject, String htmlBody, Map<String, File> files) throws MessagingException, IllegalArgumentException {
+
+        if (emailReceptor == null || emailReceptor.isBlank()) {
+            throw new IllegalArgumentException("[FAIL - buildMessageToHtmlBody] : The parameter emailReceptor is necessary to build and send Message");
+        }
+
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(userEmail));
+        message.setSubject(subject == null || subject.isBlank() ? "NON" : subject);
+        message.setSentDate(new Date());
+
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailReceptor));
+
+        MimeBodyPart htmlPart = new MimeBodyPart();
+        htmlPart.setContent(htmlBody, "text/html; charset=UTF-8");
+
+        MimeMultipart parts = new MimeMultipart(htmlPart);
+        if (files != null && !files.isEmpty()) {
+            List<String> keys = new ArrayList(files.keySet());
+            for (String s : keys) {
+                MimeBodyPart filePart = new MimeBodyPart();
+                File file = files.get(s);
+                if (file != null) {
+                    filePart.setDataHandler(new DataHandler(new FileDataSource(file)));
+                    filePart.setFileName(s);
+                    parts.addBodyPart(filePart);
+                }
+            }
+        }
+
+        message.setContent(parts);
+
+        return message;
+    }
+
+    public static Answer sendMesssage(String emailReceptor, String subject, String plainBody, Map<String, File> files) {
         try {
-            Transport.send(buildMessage(emailReceptor, subject, htmlBody, plainBody, null, null));
-            return true;
-        } catch (AuthenticationFailedException e) {
-            System.err.println("Autenticación fallida: " + e.getMessage());
-        } catch (SendFailedException e) {
-            System.err.println("Dirección inválida o rechazada: " + e.getMessage());
-        } catch (MessagingException e) {
-            System.err.println("Error de red o protocolo: " + e.getMessage());
-        }
-        return false;
-    }
-
-    public boolean sendMessageWithFiles(String emailReceptor, String subject,
-            String htmlBody, String plainBody, List<File> files, List<String> fileNames) {
-        try {
-            Transport.send(buildMessage(emailReceptor, subject, htmlBody, plainBody, files, fileNames));
-            return true;
-        } catch (AuthenticationFailedException e) {
-            System.err.println("Autenticación fallida: " + e.getMessage());
-        } catch (SendFailedException e) {
-            System.err.println("Dirección inválida o rechazada: " + e.getMessage());
-        } catch (MessagingException e) {
-            System.err.println("Error de red o protocolo: " + e.getMessage());
-        }
-        return false;
-    }
-
-    private static void checkInitialized() {
-        if (!initialized) {
-            throw new IllegalStateException("EmailManager no inicializado. Llamar a init(user, password) primero.");
+            Message message = buildMessageToPlainBody(emailReceptor, subject, plainBody, files);
+            Transport.send(message);
+            return new Answer(true, AnswerCode.OK, "", "");
+        } catch (MessagingException | IllegalArgumentException ex) {
+            LOG.log(System.Logger.Level.ERROR, (String) null, ex);
+            return new Answer(Boolean.TRUE, AnswerCode.INTERNAL_SERVER_ERROR, "", ex.getMessage());
         }
     }
 
-    public static boolean isInitialized() {
-        return initialized;
-    }
 }
